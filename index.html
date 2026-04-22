@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a2540">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="Umva - Peer mental health support for Rwandan youth">
+<title>Umva</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a2540;
+    --navy-mid: #0e3060;
+    --blue: #1a56a0;
+    --blue-light: #2d7dd2;
+    --accent: #00c9a7;
+    --accent-soft: #00c9a722;
+    --gold: #f5c842;
+    --white: #ffffff;
+    --off-white: #f0f4f8;
+    --text-muted: #8899aa;
+    --card-bg: #ffffff0d;
+    --card-border: #ffffff18;
+    --danger: #ff4757;
+    --warn: #ffa502;
+    --success: #2ed573;
+    --font-display: 'Playfair Display', serif;
+    --font-body: 'DM Sans', sans-serif;
+    --screen-w: 390px;
+    --screen-h: 844px;
+    --radius: 20px;
+    --radius-sm: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: var(--font-body);
+    background: #060f1e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Phone shell */
+  .phone-shell {
+    width: var(--screen-w);
+    height: var(--screen-h);
+    background: var(--navy);
+    border-radius: 44px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 40px 120px #00000088, 0 0 0 1px #ffffff11, inset 0 0 0 1px #ffffff08;
+  }
+
+  @media (max-width: 430px) {
+    body { background: var(--navy); align-items: flex-start; }
+    .phone-shell { width: 100vw; height: 100vh; border-radius: 0; box-shadow: none; }
+  }
+
+  /* Screens */
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: translateX(30px);
+  }
+  .screen.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(0);
+  }
+  .screen.exit {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+
+  /* ── SPLASH ── */
+  #splash {
+    background: linear-gradient(160deg, #0a2540 0%, #0e3060 50%, #0a2540 100%);
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+  }
+  .splash-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .splash-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, #00c9a715 0%, transparent 70%);
+  }
+  .splash-circle.c1 { width: 400px; height: 400px; top: -100px; right: -100px; }
+  .splash-circle.c2 { width: 300px; height: 300px; bottom: 50px; left: -80px; background: radial-gradient(circle, #1a56a020 0%, transparent 70%); }
+  .splash-dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, #ffffff08 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .splash-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 0 40px;
+    animation: splashIn 1s ease forwards;
+  }
+  @keyframes splashIn {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .splash-logo {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    animation: logoFloat 3s ease-in-out infinite;
+  }
+  @keyframes logoFloat {
+    0%, 100% { transform: translateY(0px); filter: drop-shadow(0 8px 28px #00c9a760); }
+    50% { transform: translateY(-8px); filter: drop-shadow(0 16px 36px #00c9a790); }
+  }
+  .splash-title {
+    font-family: var(--font-display);
+    font-size: 52px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+  .splash-subtitle {
+    font-size: 15px;
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .splash-tagline {
+    font-size: 16px;
+    color: #8899aacc;
+    text-align: center;
+    line-height: 1.6;
+    margin-top: 8px;
+  }
+  .splash-btn {
+    margin-top: 40px;
+    background: linear-gradient(135deg, var(--accent), #00a888);
+    color: var(--navy);
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 600;
+    padding: 16px 48px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px #00c9a740;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    max-width: 280px;
+  }
+  .splash-btn:active { transform: scale(0.97); }
+  .splash-lang {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 12px;
+  }
+
+  /* ── ONBOARDING ── */
+  #onboarding {
+    background: var(--navy);
+  }
+  .onboard-slides {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+  .onboard-slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 32px;
+    opacity: 0;
+    transform: translateX(40px);
+    transition: all 0.4s ease;
+    pointer-events: none;
+  }
+  .onboard-slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+  }
+  .onboard-icon {
+    width: 120px;
+    height: 120px;
+    border-radius: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 52px;
+    margin-bottom: 32px;
+  }
+  .onboard-slide h2 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--white);
+    text-align: center;
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .onboard-slide p {
+    font-size: 15px;
+    color: #8899aacc;
+    text-align: center;
+    line-height: 1.7;
+  }
+  .onboard-dots {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    padding: 20px;
+  }
+  .onboard-dot {
+    width: 8px; height: 8px;
+    border-radius: 4px;
+    background: #ffffff22;
+    transition: all 0.3s ease;
+  }
+  .onboard-dot.active {
+    width: 24px;
+    background: var(--accent);
+  }
+  .onboard-nav {
+    padding: 20px 32px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .btn-ghost {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 15px;
+    cursor: pointer;
+    padding: 8px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #00a888);
+    color: var(--navy);
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 600;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+  .btn-primary:active { transform: scale(0.97); }
+
+  /* ── HOME ── */
+  #home {
+    background: var(--navy);
+    overflow-y: auto;
+  }
+  .home-header {
+    padding: 56px 24px 24px;
+    background: linear-gradient(180deg, var(--navy-mid), var(--navy));
+    position: relative;
+    overflow: hidden;
+  }
+  .home-header-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 80% 20%, #00c9a712 0%, transparent 60%);
+  }
+  .home-greeting {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    position: relative;
+  }
+  .home-name {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--white);
+    font-weight: 600;
+    position: relative;
+    margin-top: 4px;
+  }
+  .home-date {
+    font-size: 13px;
+    color: var(--text-muted);
+    position: relative;
+    margin-top: 2px;
+  }
+  .streak-badge {
+    position: absolute;
+    top: 56px;
+    right: 24px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: 20px;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .home-content {
+    padding: 0 20px 100px;
+  }
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 24px 0 12px;
+  }
+
+  /* Mood card */
+  .mood-card {
+    background: linear-gradient(135deg, #0e3060, #1a56a020);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 8px;
+  }
+  .mood-card h3 {
+    font-size: 16px;
+    color: var(--white);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .mood-card p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+  .mood-emojis {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .mood-btn {
+    flex: 1;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    padding: 12px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 24px;
+  }
+  .mood-btn span.label {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+  }
+  .mood-btn:active, .mood-btn.selected {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    transform: scale(1.05);
+  }
+
+  /* Feature cards */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .feature-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 20px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .feature-card:active { transform: scale(0.97); opacity: 0.8; }
+  .feature-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .feature-card h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.3;
+  }
+  .feature-card p {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  .feature-card.full-width {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+  .feature-card.full-width .feature-text { flex: 1; }
+  .feature-card.crisis {
+    background: linear-gradient(135deg, #ff475715, #ff475705);
+    border-color: #ff475740;
+  }
+  .feature-card.crisis h4 { color: #ff6b7a; }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+    height: 80px;
+    background: #0a254088;
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding-bottom: 16px;
+    z-index: 10;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 12px;
+    transition: all 0.2s;
+    border: none;
+    background: none;
+  }
+  .nav-item .nav-icon { font-size: 22px; }
+  .nav-item .nav-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-weight: 500;
+  }
+  .nav-item.active .nav-label { color: var(--accent); }
+  .nav-item.active .nav-icon { filter: drop-shadow(0 0 6px var(--accent)); }
+
+  /* ── CHECKIN ── */
+  #checkin {
+    background: var(--navy);
+    overflow-y: auto;
+  }
+  .screen-header {
+    padding: 56px 24px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .back-btn {
+    width: 40px; height: 40px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--white);
+    flex-shrink: 0;
+  }
+  .screen-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--white);
+    font-weight: 600;
+  }
+  .checkin-body {
+    padding: 0 24px 100px;
+  }
+  .checkin-progress {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 32px;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 3px;
+    background: var(--card-border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar.done { background: var(--accent); }
+  .progress-bar.active { background: linear-gradient(90deg, var(--accent), var(--blue-light)); }
+  .checkin-q {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+    animation: fadeUp 0.4s ease;
+  }
+  .checkin-q.active { display: flex; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .checkin-q h2 {
+    font-family: var(--font-display);
+    font-size: 24px;
+    color: var(--white);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .checkin-q p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .option-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    width: 100%;
+  }
+  .option-btn .opt-emoji { font-size: 24px; flex-shrink: 0; }
+  .option-btn .opt-text { font-size: 15px; color: var(--white); font-family: var(--font-body); font-weight: 400; }
+  .option-btn .opt-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .option-btn:active, .option-btn.selected {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+  .checkin-result {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 40px 0;
+    gap: 20px;
+    animation: fadeUp 0.5s ease;
+  }
+  .checkin-result.active { display: flex; }
+  .result-icon {
+    width: 100px; height: 100px;
+    background: var(--accent-soft);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+  }
+  .result-title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    color: var(--white);
+    font-weight: 600;
+  }
+  .result-text {
+    font-size: 15px;
+    color: #8899aacc;
+    line-height: 1.7;
+    max-width: 280px;
+  }
+  .result-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  /* ── LEARN ── */
+  #learn {
+    background: var(--navy);
+    overflow-y: auto;
+  }
+  .learn-body {
+    padding: 0 20px 100px;
+  }
+  .audio-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .audio-card:active { transform: scale(0.98); }
+  .audio-thumb {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+  }
+  .audio-info { flex: 1; }
+  .audio-title {
+    font-size: 15px;
+    color: var(--white);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .audio-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .audio-lang {
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  .play-btn {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+    color: var(--navy);
+  }
+  .rsl-section {
+    background: linear-gradient(135deg, #1a56a020, #00c9a710);
+    border: 1px solid var(--blue-light)33;
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 12px;
+  }
+  .rsl-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .rsl-badge {
+    background: var(--blue-light);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+  .rsl-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--white);
+  }
+  .rsl-videos {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .rsl-video {
+    flex-shrink: 0;
+    width: 120px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .rsl-video:active { transform: scale(0.96); }
+  .rsl-thumb { font-size: 32px; margin-bottom: 8px; }
+  .rsl-name { font-size: 11px; color: var(--text-muted); line-height: 1.3; }
+
+  /* ── PEER ── */
+  #peer {
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+  }
+  .peer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 20px;
+  }
+  .counsellor-card {
+    background: linear-gradient(135deg, #0e3060, #0a2540);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .counsellor-card:active { transform: scale(0.98); }
+  .counsellor-avatar {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+    border: 2px solid var(--accent);
+  }
+  .counsellor-info { flex: 1; }
+  .counsellor-name {
+    font-size: 16px;
+    color: var(--white);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .counsellor-area {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .online-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--success);
+    font-weight: 500;
+  }
+  .online-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.8); }
+  }
+  .chat-btn {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: var(--font-body);
+  }
+
+  /* Chat interface */
+  #chat-screen {
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+  }
+  .chat-header {
+    padding: 48px 20px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid var(--card-border);
+    background: var(--navy-mid);
+  }
+  .chat-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .chat-info { flex: 1; }
+  .chat-name { font-size: 16px; color: var(--white); font-weight: 600; }
+  .chat-status { font-size: 12px; color: var(--success); }
+  .chat-anon {
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .msg {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.5;
+    animation: msgIn 0.3s ease;
+  }
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .msg.received {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--white);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+  .msg.sent {
+    background: linear-gradient(135deg, var(--accent), #00a888);
+    color: var(--navy);
+    font-weight: 500;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  }
+  .msg-time {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+  .chat-input-bar {
+    padding: 12px 16px 32px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    background: var(--navy);
+    border-top: 1px solid var(--card-border);
+  }
+  .chat-input {
+    flex: 1;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 12px 16px;
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 14px;
+    resize: none;
+    outline: none;
+    max-height: 100px;
+  }
+  .chat-input::placeholder { color: var(--text-muted); }
+  .send-btn {
+    width: 44px; height: 44px;
+    background: var(--accent);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+    color: var(--navy);
+  }
+  .send-btn:active { transform: scale(0.9); }
+
+  /* ── CRISIS ── */
+  #crisis {
+    background: var(--navy);
+    overflow-y: auto;
+  }
+  .crisis-hero {
+    margin: 0 20px 20px;
+    background: linear-gradient(135deg, #ff475720, #ff475705);
+    border: 1px solid #ff475740;
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+  }
+  .crisis-hero-icon { font-size: 48px; margin-bottom: 12px; }
+  .crisis-hero h2 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+  .crisis-hero p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .crisis-body { padding: 0 20px 100px; }
+  .hotline-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .hotline-card:active { transform: scale(0.98); }
+  .hotline-icon {
+    width: 52px; height: 52px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+  }
+  .hotline-info { flex: 1; }
+  .hotline-name { font-size: 15px; color: var(--white); font-weight: 600; margin-bottom: 4px; }
+  .hotline-number { font-size: 20px; color: var(--accent); font-weight: 700; font-family: var(--font-display); }
+  .hotline-desc { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .call-btn {
+    background: var(--success);
+    color: var(--navy);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 16px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+    flex-shrink: 0;
+  }
+  .breathe-card {
+    background: linear-gradient(135deg, #1a56a030, #00c9a710);
+    border: 1px solid var(--blue-light)33;
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+  .breathe-circle {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    border: 2px solid var(--accent);
+    margin: 16px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    transition: all 4s ease;
+  }
+  .breathe-circle.inhale {
+    transform: scale(1.4);
+    background: #00c9a730;
+    border-color: var(--accent);
+  }
+  .breathe-text {
+    font-size: 16px;
+    color: var(--accent);
+    font-weight: 600;
+    min-height: 24px;
+  }
+  .breathe-instruction {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  /* ── REFERRAL ── */
+  #referral {
+    background: var(--navy);
+    overflow-y: auto;
+  }
+  .referral-body { padding: 0 20px 100px; }
+  .referral-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .ref-step {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 24px;
+    position: relative;
+  }
+  .ref-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    bottom: 0;
+    width: 2px;
+    background: var(--card-border);
+  }
+  .ref-num {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+    font-family: var(--font-display);
+  }
+  .ref-content { flex: 1; padding-top: 8px; }
+  .ref-title { font-size: 15px; color: var(--white); font-weight: 600; margin-bottom: 6px; }
+  .ref-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+  .mutuelle-card {
+    background: linear-gradient(135deg, #1a56a030, #00c9a710);
+    border: 1px solid var(--accent)33;
+    border-radius: var(--radius);
+    padding: 20px;
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .mutuelle-icon { font-size: 40px; }
+  .mutuelle-info h3 { font-size: 16px; color: var(--white); font-weight: 600; margin-bottom: 4px; }
+  .mutuelle-info p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+  /* Utility */
+  .divider {
+    height: 1px;
+    background: var(--card-border);
+    margin: 16px 0;
+  }
+  .toast {
+    position: absolute;
+    bottom: 100px;
+    left: 20px; right: 20px;
+    background: #1a2d40ee;
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    font-size: 14px;
+    color: var(--white);
+    text-align: center;
+    z-index: 100;
+    animation: toastIn 0.4s ease;
+    backdrop-filter: blur(10px);
+  }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="phone-shell" id="app">
+
+  <!-- ══════════════════════════════════
+       SCREEN 1: SPLASH
+  ══════════════════════════════════ -->
+  <div class="screen active" id="splash">
+    <div class="splash-bg">
+      <div class="splash-circle c1"></div>
+      <div class="splash-circle c2"></div>
+      <div class="splash-dots"></div>
+    </div>
+    <div class="splash-content">
+      <div class="splash-logo">
+        <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="logoGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00c9a7"/>
+              <stop offset="100%" stop-color="#2d7dd2"/>
+            </linearGradient>
+            <linearGradient id="innerGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#0a2540"/>
+              <stop offset="100%" stop-color="#0e3060"/>
+            </linearGradient>
+            <linearGradient id="earGrad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00c9a7"/>
+              <stop offset="100%" stop-color="#1a56a0"/>
+            </linearGradient>
+          </defs>
+          <!-- Outer circle background -->
+          <circle cx="60" cy="60" r="58" fill="url(#innerGrad)" stroke="url(#logoGrad)" stroke-width="2"/>
+          <!-- Subtle inner ring -->
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#ffffff08" stroke-width="1"/>
+          <!-- Ear shape — representing listening/kumva — main symbol -->
+          <path d="M60 22 C42 22 28 36 28 54 C28 66 34 76 44 82 C44 88 40 92 36 95" 
+                stroke="url(#logoGrad)" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <!-- Inner ear canal -->
+          <path d="M60 34 C48 34 40 43 40 54 C40 62 45 68 52 71" 
+                stroke="url(#earGrad)" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.85"/>
+          <!-- Sound waves radiating from ear — representing community voice -->
+          <path d="M72 36 C80 43 80 65 72 72" stroke="#00c9a7" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.9"/>
+          <path d="M80 28 C93 39 93 69 80 80" stroke="#00c9a7" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+          <!-- Heart dot — representing care -->
+          <circle cx="52" cy="75" r="4" fill="#00c9a7"/>
+          <circle cx="52" cy="75" r="2" fill="#0a2540"/>
+          <!-- Small people dots — representing community -->
+          <circle cx="38" cy="98" r="3" fill="#2d7dd2" opacity="0.8"/>
+          <circle cx="48" cy="103" r="3" fill="#00c9a7" opacity="0.8"/>
+          <circle cx="58" cy="105" r="3" fill="#2d7dd2" opacity="0.8"/>
+        </svg>
+      </div>
+      <div class="splash-title">Umva</div>
+      <div class="splash-subtitle">Kumva · Gusobanukirwa · Gufasha</div>
+      <div class="splash-tagline">Listen. Feel. Understand.<br>A peer mental health platform for Rwandan youth.</div>
+      <button class="splash-btn" onclick="goTo('onboarding')">Tangira / Get Started</button>
+      <div class="splash-lang">🇷🇼 🇷🇼 Kinyarwanda · English · RSL</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 2: ONBOARDING
+  ══════════════════════════════════ -->
+  <div class="screen" id="onboarding">
+    <div class="onboard-slides">
+      <div class="onboard-slide active" id="slide-0">
+        <div class="onboard-icon" style="background: linear-gradient(135deg,#00c9a722,#00c9a711)">🫂</div>
+        <h2>You are not alone</h2>
+        <p>1 in 5 Rwandan youth lives with depression, anxiety, or trauma in silence. Umva creates a safe, stigma-free space where your feelings are heard — without judgment.</p>
+      </div>
+      <div class="onboard-slide" id="slide-1">
+        <div class="onboard-icon" style="background: linear-gradient(135deg,#1a56a033,#1a56a011)">🤝</div>
+        <h2>Trusted peer counsellors</h2>
+        <p>Connect with trained youth peer counsellors from neighbouring communities — close enough to understand your context, separate enough to protect your privacy.</p>
+      </div>
+      <div class="onboard-slide" id="slide-2">
+        <div class="onboard-icon" style="background: linear-gradient(135deg,#f5c84222,#f5c84211)">🦻</div>
+        <h2>Inclusive for everyone</h2>
+        <p>All content is available in Kinyarwanda audio, English, and Rwandan Sign Language (RSL) — serving every young Rwandan including the deaf community.</p>
+      </div>
+      <div class="onboard-slide" id="slide-3">
+        <div class="onboard-icon" style="background: linear-gradient(135deg,#2ed57322,#2ed57311)">📵</div>
+        <h2>Works without internet</h2>
+        <p>Umva works offline. No internet? No problem. Your wellness data and content stay available wherever you are in Rwanda.</p>
+      </div>
+    </div>
+    <div class="onboard-dots">
+      <div class="onboard-dot active" id="dot-0"></div>
+      <div class="onboard-dot" id="dot-1"></div>
+      <div class="onboard-dot" id="dot-2"></div>
+      <div class="onboard-dot" id="dot-3"></div>
+    </div>
+    <div class="onboard-nav">
+      <button class="btn-ghost" onclick="skipOnboard()">Skip</button>
+      <button class="btn-primary" id="onboard-next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 3: HOME
+  ══════════════════════════════════ -->
+  <div class="screen" id="home">
+    <div class="home-header">
+      <div class="home-header-bg"></div>
+      <div class="home-greeting">Muraho 👋</div>
+      <div class="home-name">How are you today?</div>
+      <div class="home-date" id="home-date"></div>
+      <div class="streak-badge">🔥 <span id="streak-count">3</span> day streak</div>
+    </div>
+    <div class="home-content">
+      <div class="mood-card">
+        <h3>Daily check-in</h3>
+        <p>How are you feeling right now?</p>
+        <div class="mood-emojis">
+          <button class="mood-btn" onclick="quickMood(this,'😔','Sad')"><span>😔</span><span class="label">Sad</span></button>
+          <button class="mood-btn" onclick="quickMood(this,'😟','Anxious')"><span>😟</span><span class="label">Anxious</span></button>
+          <button class="mood-btn" onclick="quickMood(this,'😐','Okay')"><span>😐</span><span class="label">Okay</span></button>
+          <button class="mood-btn" onclick="quickMood(this,'🙂','Good')"><span>🙂</span><span class="label">Good</span></button>
+          <button class="mood-btn" onclick="quickMood(this,'😊','Great')"><span>😊</span><span class="label">Great</span></button>
+        </div>
+      </div>
+
+      <div class="section-label">What would you like to do?</div>
+      <div class="feature-grid">
+        <div class="feature-card" onclick="goTo('checkin')">
+          <div class="feature-icon" style="background:#00c9a720">🧠</div>
+          <div>
+            <h4>Wellness Check-in</h4>
+            <p>3 quick questions about your mental state</p>
+          </div>
+        </div>
+        <div class="feature-card" onclick="goTo('learn')">
+          <div class="feature-icon" style="background:#1a56a030">🎧</div>
+          <div>
+            <h4>Listen & Learn</h4>
+            <p>Audio content in Kinyarwanda & RSL videos</p>
+          </div>
+        </div>
+        <div class="feature-card" onclick="goTo('peer')">
+          <div class="feature-icon" style="background:#f5c84220">🤝</div>
+          <div>
+            <h4>Talk to a Peer</h4>
+            <p>Anonymous chat with a trained counsellor</p>
+          </div>
+        </div>
+        <div class="feature-card" onclick="goTo('referral')">
+          <div class="feature-icon" style="background:#2ed57320">🏥</div>
+          <div>
+            <h4>Get Professional Help</h4>
+            <p>Mutuelle de Santé referral pathway</p>
+          </div>
+        </div>
+        <div class="feature-card full-width crisis" onclick="goTo('crisis')">
+          <div class="feature-icon" style="background:#ff475730; font-size:26px">🆘</div>
+          <div class="feature-text">
+            <h4>Crisis Support</h4>
+            <p>Immediate help if you are in distress — available 24/7</p>
+          </div>
+          <span style="color:#ff6b7a;font-size:20px">›</span>
+        </div>
+      </div>
+
+      <div class="section-label">Umva community</div>
+      <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:16px;display:flex;gap:16px;align-items:center">
+        <div style="font-size:36px">👥</div>
+        <div>
+          <div style="font-size:15px;color:var(--white);font-weight:600;margin-bottom:4px">Peer Circles near you</div>
+          <div style="font-size:13px;color:var(--text-muted)">Next session: Gikondo Community Centre<br>Saturday 10:00 AM · 8 spots available</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-item active" onclick="goTo('home')">
+        <span class="nav-icon">🏠</span><span class="nav-label">Home</span>
+      </button>
+      <button class="nav-item" onclick="goTo('checkin')">
+        <span class="nav-icon">🧠</span><span class="nav-label">Check-in</span>
+      </button>
+      <button class="nav-item" onclick="goTo('learn')">
+        <span class="nav-icon">🎧</span><span class="nav-label">Learn</span>
+      </button>
+      <button class="nav-item" onclick="goTo('peer')">
+        <span class="nav-icon">💬</span><span class="nav-label">Peer</span>
+      </button>
+      <button class="nav-item" onclick="goTo('crisis')">
+        <span class="nav-icon">🆘</span><span class="nav-label">Crisis</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 4: WELLNESS CHECK-IN
+  ══════════════════════════════════ -->
+  <div class="screen" id="checkin">
+    <div class="screen-header">
+      <div class="back-btn" onclick="goTo('home')">←</div>
+      <div class="screen-title">Wellness Check-in</div>
+    </div>
+    <div class="checkin-body">
+      <div class="checkin-progress">
+        <div class="progress-bar active" id="pb1"></div>
+        <div class="progress-bar" id="pb2"></div>
+        <div class="progress-bar" id="pb3"></div>
+      </div>
+
+      <!-- Q1 -->
+      <div class="checkin-q active" id="q1">
+        <h2>How have you been feeling this week?</h2>
+        <p>Be honest — your answers are private and never shared.</p>
+        <button class="option-btn" onclick="answerQ(1,this,'verylow')">
+          <span class="opt-emoji">😢</span>
+          <div><div class="opt-text">Very low or hopeless</div><div class="opt-sub">Feeling like things will not get better</div></div>
+        </button>
+        <button class="option-btn" onclick="answerQ(1,this,'low')">
+          <span class="opt-emoji">😟</span>
+          <div><div class="opt-text">Struggling a bit</div><div class="opt-sub">More stress or worry than usual</div></div>
+        </button>
+        <button class="option-btn" onclick="answerQ(1,this,'okay')">
+          <span class="opt-emoji">😐</span>
+          <div><div class="opt-text">Managing okay</div><div class="opt-sub">Some ups and downs but coping</div></div>
+        </button>
+        <button class="option-btn" onclick="answerQ(1,this,'good')">
+          <span class="opt-emoji">😊</span>
+          <div><div class="opt-text">Feeling good</div><div class="opt-sub">Generally positive and stable</div></div>
+        </button>
+      </div>
+
+      <!-- Q2 -->
+      <div class="checkin-q" id="q2">
+        <h2>Have you had someone to talk to about your feelings?</h2>
+        <p>Social support is one of the strongest protectors of mental health.</p>
+        <button class="option-btn" onclick="answerQ(2,this,'none')">
+          <span class="opt-emoji">🚶</span>
+          <div><div class="opt-text">No, I feel quite alone</div><div class="opt-sub">No one I feel safe talking to</div></div>
+        </button>
+        <button class="option-btn" onclick="answerQ(2,this,'some')">
+          <span class="opt-emoji">🤔</span>
+          <div><div class="opt-text">Not really</div><div class="opt-sub">I have people around but not opened up</div></div>
+        </button>
+        <button class="option-btn" onclick="answerQ(2,this,'yes')">
+          <span class="opt-emoji">🤝</span>
+          <div><div class="opt-text">Yes, a little</div><div class="opt-sub">Talked to someone briefly</div></div>
+        </button>
+        <button class="option-btn" onclick="answerQ(2,this,'strong')">
+          <span class="opt-emoji">💪</span>
+          <div><div class="opt-text">Yes, I have strong support</div><div class="opt-sub">Family or friends who really listen</div></div>
+        </button>
+      </div>
+
+      <!-- Q3 -->
+      <div class="checkin-q" id="q3">
+        <h2>What do you need most right now?</h2>
+        <p>We will suggest the right Umva resource for you.</p>
+        <button class="option-btn" onclick="answerQ(3,this,'listen')">
+          <span class="opt-emoji">👂</span>
+          <div><div class="opt-text">Someone to listen to me</div><div class="opt-sub">I need to be heard without judgment</div></div>
+        </button>
+        <button class="option-btn" onclick="answerQ(3,this,'info')">
+          <span class="opt-emoji">📚</span>
+          <div><div class="opt-text">Information and guidance</div><div class="opt-sub">Help understanding what I am going through</div></div>
+        </button>
+        <button class="option-btn" onclick="answerQ(3,this,'calm')">
+          <span class="opt-emoji">🧘</span>
+          <div><div class="opt-text">Techniques to calm down</div><div class="opt-sub">Breathing or grounding exercises</div></div>
+        </button>
+        <button class="option-btn" onclick="answerQ(3,this,'professional')">
+          <span class="opt-emoji">🏥</span>
+          <div><div class="opt-text">Professional support</div><div class="opt-sub">I think I need to talk to a specialist</div></div>
+        </button>
+      </div>
+
+      <!-- Result -->
+      <div class="checkin-result" id="checkin-result">
+        <div class="result-icon" id="result-icon">✅</div>
+        <div class="result-title" id="result-title">Check-in complete</div>
+        <div class="result-text" id="result-text">Thank you for taking this step. Based on your answers, here is what we recommend.</div>
+        <div class="result-actions" id="result-actions"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 5: LEARN
+  ══════════════════════════════════ -->
+  <div class="screen" id="learn">
+    <div class="screen-header">
+      <div class="back-btn" onclick="goTo('home')">←</div>
+      <div class="screen-title">Listen & Learn</div>
+    </div>
+    <div class="learn-body">
+      <div class="rsl-section">
+        <div class="rsl-header">
+          <div class="rsl-badge">RSL</div>
+          <div class="rsl-title">Rwandan Sign Language Videos</div>
+        </div>
+        <div class="rsl-videos">
+          <div class="rsl-video" onclick="playRSL('What is mental health?')">
+            <div class="rsl-thumb">🧠</div>
+            <div class="rsl-name">What is mental health?</div>
+          </div>
+          <div class="rsl-video" onclick="playRSL('Dealing with anxiety')">
+            <div class="rsl-thumb">💆</div>
+            <div class="rsl-name">Dealing with anxiety</div>
+          </div>
+          <div class="rsl-video" onclick="playRSL('How to ask for help')">
+            <div class="rsl-thumb">🤝</div>
+            <div class="rsl-name">How to ask for help</div>
+          </div>
+          <div class="rsl-video" onclick="playRSL('You are not alone')">
+            <div class="rsl-thumb">🫂</div>
+            <div class="rsl-name">You are not alone</div>
+          </div>
+          <div class="rsl-video" onclick="playRSL('Grief and loss')">
+            <div class="rsl-thumb">🕊️</div>
+            <div class="rsl-name">Grief and loss</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">Audio content — Kinyarwanda</div>
+      <div class="audio-card" onclick="playAudio('Gusobanukirwa Ubuzima Bwo Mu Mutwe')">
+        <div class="audio-thumb" style="background:#00c9a720">🎙️</div>
+        <div class="audio-info">
+          <div class="audio-title">Gusobanukirwa Ubuzima Bwo Mu Mutwe</div>
+          <div class="audio-meta"><span>4 min</span><span class="audio-lang">🇷🇼 Kinyarwanda</span></div>
+        </div>
+        <div class="play-btn">▶</div>
+      </div>
+      <div class="audio-card" onclick="playAudio('Guhangana No Gutinya')">
+        <div class="audio-thumb" style="background:#1a56a030">🎙️</div>
+        <div class="audio-info">
+          <div class="audio-title">Guhangana No Gutinya</div>
+          <div class="audio-meta"><span>5 min</span><span class="audio-lang">🇷🇼 Kinyarwanda</span></div>
+        </div>
+        <div class="play-btn">▶</div>
+      </div>
+      <div class="audio-card" onclick="playAudio('Kwivugira No Gushaka Ubufasha')">
+        <div class="audio-thumb" style="background:#f5c84220">🎙️</div>
+        <div class="audio-info">
+          <div class="audio-title">Kwivugira No Gushaka Ubufasha</div>
+          <div class="audio-meta"><span>3 min</span><span class="audio-lang">🇷🇼 Kinyarwanda</span></div>
+        </div>
+        <div class="play-btn">▶</div>
+      </div>
+
+      <div class="section-label">Audio content — English</div>
+      <div class="audio-card" onclick="playAudio('Understanding mental health')">
+        <div class="audio-thumb" style="background:#2ed57320">🎙️</div>
+        <div class="audio-info">
+          <div class="audio-title">Understanding mental health</div>
+          <div class="audio-meta"><span>4 min</span><span class="audio-lang">🇬🇧 English</span></div>
+        </div>
+        <div class="play-btn">▶</div>
+      </div>
+      <div class="audio-card" onclick="playAudio('Managing stress every day')">
+        <div class="audio-thumb" style="background:#ff475720">🎙️</div>
+        <div class="audio-info">
+          <div class="audio-title">Managing stress every day</div>
+          <div class="audio-meta"><span>5 min</span><span class="audio-lang">🇬🇧 English</span></div>
+        </div>
+        <div class="play-btn">▶</div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-item" onclick="goTo('home')"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></button>
+      <button class="nav-item" onclick="goTo('checkin')"><span class="nav-icon">🧠</span><span class="nav-label">Check-in</span></button>
+      <button class="nav-item active" onclick="goTo('learn')"><span class="nav-icon">🎧</span><span class="nav-label">Learn</span></button>
+      <button class="nav-item" onclick="goTo('peer')"><span class="nav-icon">💬</span><span class="nav-label">Peer</span></button>
+      <button class="nav-item" onclick="goTo('crisis')"><span class="nav-icon">🆘</span><span class="nav-label">Crisis</span></button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 6: PEER COUNSELLORS
+  ══════════════════════════════════ -->
+  <div class="screen" id="peer">
+    <div class="screen-header">
+      <div class="back-btn" onclick="goTo('home')">←</div>
+      <div class="screen-title">Talk to a Peer</div>
+    </div>
+    <div class="peer-body" style="padding: 0 20px 100px;">
+      <div style="background:var(--accent-soft);border:1px solid var(--accent)33;border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:20px;display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:18px;flex-shrink:0">🔒</span>
+        <div style="font-size:13px;color:#8899aacc;line-height:1.5">Your conversations are completely anonymous. Peer counsellors are trained youth from neighbouring communities — your identity is never shared.</div>
+      </div>
+
+      <div class="section-label">Available peer counsellors</div>
+      <div class="counsellor-card" onclick="openChat('Amina K.','🧕','Kimironko, Kigali')">
+        <div class="counsellor-avatar">🧕</div>
+        <div class="counsellor-info">
+          <div class="counsellor-name">Amina K.</div>
+          <div class="counsellor-area">📍 Serving Nyarugenge District</div>
+          <div class="online-badge"><div class="online-dot"></div>Available now</div>
+        </div>
+        <button class="chat-btn" onclick="event.stopPropagation();openChat('Amina K.','🧕','Nyarugenge')">Chat</button>
+      </div>
+      <div class="counsellor-card" onclick="openChat('Jean-Paul M.','👨🏾','Huye District')">
+        <div class="counsellor-avatar">👨🏾</div>
+        <div class="counsellor-info">
+          <div class="counsellor-name">Jean-Paul M.</div>
+          <div class="counsellor-area">📍 Serving Huye District</div>
+          <div class="online-badge"><div class="online-dot"></div>Available now</div>
+        </div>
+        <button class="chat-btn" onclick="event.stopPropagation();openChat('Jean-Paul M.','👨🏾','Huye')">Chat</button>
+      </div>
+      <div class="counsellor-card" onclick="openChat('Claudette U.','👩🏾','Musanze District')">
+        <div class="counsellor-avatar">👩🏾</div>
+        <div class="counsellor-info">
+          <div class="counsellor-name">Claudette U.</div>
+          <div class="counsellor-area">📍 Serving Musanze District</div>
+          <div style="font-size:11px;color:var(--warn);font-weight:500">⏱ Back in 30 min</div>
+        </div>
+        <button class="chat-btn" style="opacity:0.5" onclick="showToast('Claudette will be back in 30 minutes')">Chat</button>
+      </div>
+
+      <div class="section-label">RSL-friendly counsellors</div>
+      <div class="counsellor-card" onclick="openChat('Patrick I.','🧑🏾‍🦲','Kigali — RSL')">
+        <div class="counsellor-avatar" style="border-color:var(--gold)">🧑🏾‍🦲</div>
+        <div class="counsellor-info">
+          <div class="counsellor-name">Patrick I. <span style="font-size:11px;background:var(--gold)22;color:var(--gold);padding:2px 8px;border-radius:20px;margin-left:4px">RSL</span></div>
+          <div class="counsellor-area">📍 Serving Kicukiro District</div>
+          <div class="online-badge"><div class="online-dot"></div>Available now</div>
+        </div>
+        <button class="chat-btn" onclick="event.stopPropagation();openChat('Patrick I.','🧑🏾‍🦲','Kicukiro')">Chat</button>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-item" onclick="goTo('home')"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></button>
+      <button class="nav-item" onclick="goTo('checkin')"><span class="nav-icon">🧠</span><span class="nav-label">Check-in</span></button>
+      <button class="nav-item" onclick="goTo('learn')"><span class="nav-icon">🎧</span><span class="nav-label">Learn</span></button>
+      <button class="nav-item active" onclick="goTo('peer')"><span class="nav-icon">💬</span><span class="nav-label">Peer</span></button>
+      <button class="nav-item" onclick="goTo('crisis')"><span class="nav-icon">🆘</span><span class="nav-label">Crisis</span></button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 7: CHAT
+  ══════════════════════════════════ -->
+  <div class="screen" id="chat-screen">
+    <div class="chat-header">
+      <div class="back-btn" onclick="goTo('peer')" style="background:none;border:none;font-size:22px;width:auto;height:auto">←</div>
+      <div class="chat-avatar" id="chat-avatar">🧕</div>
+      <div class="chat-info">
+        <div class="chat-name" id="chat-counsellor-name">Amina K.</div>
+        <div class="chat-status">● Online · Peer counsellor</div>
+      </div>
+      <div class="chat-anon">ANON</div>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="msg received">
+        Muraho! I'm here to listen. Everything you share is completely confidential. How are you feeling today? 🙏
+        <div class="msg-time">Now</div>
+      </div>
+    </div>
+    <div class="chat-input-bar">
+      <textarea class="chat-input" id="chat-input" placeholder="Type your message..." rows="1" onkeydown="handleChatKey(event)"></textarea>
+      <button class="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 8: CRISIS SUPPORT
+  ══════════════════════════════════ -->
+  <div class="screen" id="crisis">
+    <div class="screen-header">
+      <div class="back-btn" onclick="goTo('home')">←</div>
+      <div class="screen-title">Crisis Support</div>
+    </div>
+    <div style="padding:0 20px">
+      <div class="crisis-hero">
+        <div class="crisis-hero-icon">🆘</div>
+        <h2>You are not alone</h2>
+        <p>If you are in crisis or feeling unsafe, please reach out immediately. Help is available right now.</p>
+      </div>
+    </div>
+    <div class="crisis-body">
+      <div class="section-label">Call now — free 24/7</div>
+      <div class="hotline-card">
+        <div class="hotline-icon" style="background:#2ed57320">📞</div>
+        <div class="hotline-info">
+          <div class="hotline-name">Rwanda Mental Health Helpline</div>
+          <div class="hotline-number">116</div>
+          <div class="hotline-desc">Free · 24 hours · Kinyarwanda & English</div>
+        </div>
+        <button class="call-btn" onclick="showToast('Calling 116...')">Call</button>
+      </div>
+      <div class="hotline-card">
+        <div class="hotline-icon" style="background:#1a56a030">🏥</div>
+        <div class="hotline-info">
+          <div class="hotline-name">RBC Mental Health Programme</div>
+          <div class="hotline-number">3012</div>
+          <div class="hotline-desc">Rwanda Biomedical Centre · Professional support</div>
+        </div>
+        <button class="call-btn" onclick="showToast('Calling 3012...')">Call</button>
+      </div>
+      <div class="hotline-card">
+        <div class="hotline-icon" style="background:#f5c84220">💬</div>
+        <div class="hotline-info">
+          <div class="hotline-name">Umva Crisis Chat</div>
+          <div class="hotline-number">Available now</div>
+          <div class="hotline-desc">Anonymous · Peer counsellor · Immediate</div>
+        </div>
+        <button class="call-btn" onclick="openChat('Crisis Counsellor','🆘','Crisis')">Chat</button>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Breathing exercise</div>
+      <div class="breathe-card" onclick="startBreathe()">
+        <div style="font-size:15px;color:var(--white);font-weight:600;margin-bottom:4px">4-7-8 Breathing Technique</div>
+        <div style="font-size:13px;color:var(--text-muted)">Tap to start a calming breathing exercise</div>
+        <div class="breathe-circle" id="breathe-circle">🫁</div>
+        <div class="breathe-text" id="breathe-text">Tap to begin</div>
+        <div class="breathe-instruction" id="breathe-instruction">Inhale 4s · Hold 7s · Exhale 8s</div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-item" onclick="goTo('home')"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></button>
+      <button class="nav-item" onclick="goTo('checkin')"><span class="nav-icon">🧠</span><span class="nav-label">Check-in</span></button>
+      <button class="nav-item" onclick="goTo('learn')"><span class="nav-icon">🎧</span><span class="nav-label">Learn</span></button>
+      <button class="nav-item" onclick="goTo('peer')"><span class="nav-icon">💬</span><span class="nav-label">Peer</span></button>
+      <button class="nav-item active" onclick="goTo('crisis')"><span class="nav-icon">🆘</span><span class="nav-label">Crisis</span></button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 9: REFERRAL
+  ══════════════════════════════════ -->
+  <div class="screen" id="referral">
+    <div class="screen-header">
+      <div class="back-btn" onclick="goTo('home')">←</div>
+      <div class="screen-title">Professional Help</div>
+    </div>
+    <div class="referral-body">
+      <div style="font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:20px">
+        If your peer counsellor or check-in suggests you need professional support, Umva connects you directly to mental health services covered by your Mutuelle de Santé card.
+      </div>
+      <div class="mutuelle-card">
+        <div class="mutuelle-icon">💳</div>
+        <div class="mutuelle-info">
+          <h3>Mutuelle de Santé</h3>
+          <p>Mental health services are covered. You do not need to pay out of pocket. Bring your Mutuelle card to any referral facility.</p>
+        </div>
+      </div>
+
+      <div class="section-label">How it works</div>
+      <div class="referral-steps">
+        <div class="ref-step">
+          <div class="ref-num">1</div>
+          <div class="ref-content">
+            <div class="ref-title">Complete your check-in</div>
+            <div class="ref-desc">Your wellness check-in identifies whether professional support would benefit you. Your answers are private.</div>
+          </div>
+        </div>
+        <div class="ref-step">
+          <div class="ref-num">2</div>
+          <div class="ref-content">
+            <div class="ref-title">Talk to your peer counsellor</div>
+            <div class="ref-desc">Your trained peer counsellor discusses your situation and helps you decide if a referral is the right step.</div>
+          </div>
+        </div>
+        <div class="ref-step">
+          <div class="ref-num">3</div>
+          <div class="ref-content">
+            <div class="ref-title">Receive your referral note</div>
+            <div class="ref-desc">Umva generates a simple referral note you can show at any Mutuelle-linked health facility or mental health centre.</div>
+          </div>
+        </div>
+        <div class="ref-step">
+          <div class="ref-num">4</div>
+          <div class="ref-content">
+            <div class="ref-title">Access professional care</div>
+            <div class="ref-desc">Visit the recommended facility with your Mutuelle card. Your peer counsellor can accompany you if you wish.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">Nearby facilities</div>
+      <div class="hotline-card" style="margin-bottom:10px">
+        <div class="hotline-icon" style="background:#2ed57320;font-size:24px">🏥</div>
+        <div class="hotline-info">
+          <div class="hotline-name">Caraes Ndera Hospital</div>
+          <div style="font-size:13px;color:var(--text-muted)">Kigali · Mental health specialist<br>Mutuelle accepted ✓</div>
+        </div>
+      </div>
+      <div class="hotline-card">
+        <div class="hotline-icon" style="background:#1a56a030;font-size:24px">🏥</div>
+        <div class="hotline-info">
+          <div class="hotline-name">Butaro District Hospital</div>
+          <div style="font-size:13px;color:var(--text-muted)">Burera · Mental health unit<br>Mutuelle accepted ✓</div>
+        </div>
+      </div>
+
+      <button class="btn-primary" style="width:100%;margin-top:20px;padding:16px" onclick="showToast('Referral request sent to your peer counsellor')">Request a Referral</button>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-item" onclick="goTo('home')"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></button>
+      <button class="nav-item" onclick="goTo('checkin')"><span class="nav-icon">🧠</span><span class="nav-label">Check-in</span></button>
+      <button class="nav-item" onclick="goTo('learn')"><span class="nav-icon">🎧</span><span class="nav-label">Learn</span></button>
+      <button class="nav-item active" onclick="goTo('peer')"><span class="nav-icon">💬</span><span class="nav-label">Peer</span></button>
+      <button class="nav-item" onclick="goTo('crisis')"><span class="nav-icon">🆘</span><span class="nav-label">Crisis</span></button>
+    </div>
+  </div>
+
+</div><!-- /phone-shell -->
+
+<script>
+      // ── Core Navigation ───────────────────────────
+      function goTo(screenId) {
+        // 1. Handle transitions
+        const current = document.querySelector('.screen.active');
+        if (current) {
+          current.classList.add('exit');
+          setTimeout(() => {
+            current.classList.remove('active', 'exit');
+          }, 400);
+        }
+        
+        // 2. Activate target screen
+        const target = document.getElementById(screenId);
+        if (target) {
+          setTimeout(() => {
+            target.classList.add('active');
+          }, 50);
+        }
+
+        // 3. Update bottom nav highlight
+        document.querySelectorAll('.nav-item').forEach(btn => {
+          const onclickAttr = btn.getAttribute('onclick') || "";
+          btn.classList.toggle('active', onclickAttr.includes(`'${screenId}'`));
+        });
+
+        // 4. Scroll to top of new screen
+        if (target) target.scrollTop = 0;
+      }
+
+      // ── Onboarding Logic ──────────────────────────
+      let currentSlide = 0;
+      function nextSlide() {
+        if (currentSlide < 3) {
+          document.getElementById(`slide-${currentSlide}`).classList.remove('active');
+          document.getElementById(`dot-${currentSlide}`).classList.remove('active');
+          currentSlide++;
+          document.getElementById(`slide-${currentSlide}`).classList.add('active');
+          document.getElementById(`dot-${currentSlide}`).classList.add('active');
+          
+          const nextBtn = document.querySelector('#onboarding .btn-primary');
+          if (currentSlide === 3) nextBtn.textContent = 'Get Started';
+        } else {
+          goTo('home');
+        }
+      }
+
+      function skipOnboard() {
+        goTo('home');
+      }
+
+      // ── Mood Selection ────────────────────────────
+      function selectMood(btn, mood) {
+        document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        showToast(`Noted: You are feeling ${mood} today. We're here for you.`);
+      }
+
+      // ── Breathing Exercise ────────────────────────
+      let breatheActive = false;
+      let breatheTimer = null;
+      function startBreathe() {
+        if (breatheActive) return;
+        breatheActive = true;
+        const circle = document.getElementById('breathe-circle');
+        const text = document.getElementById('breathe-text');
+        const instr = document.getElementById('breathe-instruction');
+        let phase = 0;
+        const phases = [
+          { label: 'Inhale...', sub: 'Breathe in slowly for 4 seconds', duration: 4000, scale: true },
+          { label: 'Hold...', sub: 'Hold your breath for 7 seconds', duration: 7000, scale: true },
+          { label: 'Exhale...', sub: 'Breathe out slowly for 8 seconds', duration: 8000, scale: false },
+        ];
+        function runPhase() {
+          const p = phases[phase % 3];
+          text.textContent = p.label;
+          instr.textContent = p.sub;
+          if (p.scale) circle.classList.add('inhale');
+          else circle.classList.remove('inhale');
+          phase++;
+          breatheTimer = setTimeout(runPhase, p.duration);
+        }
+        runPhase();
+      }
+
+      // ── Toast Notification ────────────────────────
+      function showToast(msg) {
+        const old = document.querySelector('.toast');
+        if (old) old.remove();
+        const t = document.createElement('div');
+        t.className = 'toast';
+        t.textContent = msg;
+        document.getElementById('app').appendChild(t);
+        setTimeout(() => t.remove(), 3000);
+      }
+    </script>
+  </body>
+</html>
